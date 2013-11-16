@@ -1,0 +1,25 @@
+{
+    "name": "webignition/html-validator-wrapper",
+    "type": "library",
+    "description": "Wrapper for command-line interaction with W3C HTML validator",
+    "keywords": ["html", "validator"],
+    "homepage": "https://github.com/webignition/html-validator-wrapper",
+    "license": "MIT",
+
+    "require": {
+        "php": ">=5.3.2"
+    },
+
+    "autoload": {
+        "psr-0": {
+            "webignition\\Tests": "tests/",
+            "": "src/"
+        }
+    },
+
+    "require-dev": {
+        "symfony/class-loader": "*",
+        "phpunit/phpunit": "3.7.*",
+        "webignition/html-validator-output-parser":">=0.1"
+    }
+}
