@@ -13,19 +13,19 @@ class ValidateTest extends BaseTest {
     public function testValidateWithoutSettingConfigurationThrowsInvalidArgumentException() {
         $this->setExpectedException('InvalidArgumentException');
         
-        $wrapper = $this->getNewHtmlValidatorWrapper();        
+        $wrapper = $this->getMockHtmlValidatorWrapper();        
         $wrapper->validate();
     }
     
-    public function testTest() {        
+    public function testValidateReturnsHtmlValdiatorOutputObject() {        
         $configuration = new Configuration();
         $configuration->setDocumentUri('file:/foo/example.html');
 
-        $wrapper = $this->getNewHtmlValidatorWrapper(); 
+        $wrapper = $this->getMockHtmlValidatorWrapper(); 
         $wrapper->setConfiguration($configuration);
-        $wrapper->setHtmlValidatorRawOutput($this->getFixture('output/error-free.txt'));
+        $wrapper->setHtmlValidatorRawOutput($this->getFixture('0-errors.txt'));
         
-        $wrapper->validate();
+        $this->assertInstanceOf('webignition\HtmlValidator\Output\Output', $wrapper->validate());
     }
     
 }

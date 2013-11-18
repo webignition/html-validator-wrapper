@@ -28,7 +28,7 @@ class Wrapper extends BaseHtmlValidatorWrapper {
      * 
      * @return array
      */
-    protected function getRawValidatorOutputLines() {
+    public function getRawValidatorOutputLines() {
         return explode("\n", $this->cssValidatorRawOutput);
     }    
     
