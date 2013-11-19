@@ -25,6 +25,32 @@ class Wrapper {
         return $this;
     }
     
+    /**
+     * 
+     * @param array $configurationValues
+     * @return \webignition\HtmlValidator\Wrapper\Wrapper
+     * @throws \InvalidArgumentException
+     */
+    public function createConfiguration($configurationValues) {
+        if (!is_array($configurationValues) || empty($configurationValues)) {
+            throw new \InvalidArgumentException('A non-empty array of configuration values must be passed to create configuration', 2);
+        }
+        
+        if (!isset($configurationValues['documentUri'])) {
+            throw new \InvalidArgumentException('Configruation value "documentUri" not set', 3);
+        }
+        
+        $configuration = new Configuration();
+        $configuration->setDocumentUri($configurationValues['documentUri']);
+        
+        if (isset($configurationValues['validatorPath'])) {
+            $configuration->setValidatorPath($configurationValues['validatorPath']);
+        }        
+        
+        $this->setConfiguration($configuration);
+        return $this;
+    }
+    
     
     /**
      * 
