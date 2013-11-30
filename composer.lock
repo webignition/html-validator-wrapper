@@ -3,20 +3,20 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "f4058b950bfa36b67e52645c2040bff5",
+    "hash": "aca2777eda4ad6545ed6114aa14a4b5a",
     "packages": [
         {
             "name": "webignition/html-validator-output-parser",
-            "version": "0.3",
+            "version": "0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/html-validator-output-parser.git",
-                "reference": "e9102170fe9d3d91698c6bd1f27c5989d071ce96"
+                "reference": "04b7538cc37d27c7600bf2e7ccf6eddf677a73a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/html-validator-output-parser/zipball/e9102170fe9d3d91698c6bd1f27c5989d071ce96",
-                "reference": "e9102170fe9d3d91698c6bd1f27c5989d071ce96",
+                "url": "https://api.github.com/repos/webignition/html-validator-output-parser/zipball/04b7538cc37d27c7600bf2e7ccf6eddf677a73a2",
+                "reference": "04b7538cc37d27c7600bf2e7ccf6eddf677a73a2",
                 "shasum": ""
             },
             "require": {
@@ -46,7 +46,7 @@
                 "parser",
                 "validator"
             ],
-            "time": "2013-11-30 19:38:41"
+            "time": "2013-11-30 20:33:19"
         },
         {
             "name": "webignition/internet-media-type",
