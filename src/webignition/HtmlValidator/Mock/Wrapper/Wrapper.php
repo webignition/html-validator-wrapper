@@ -1,6 +1,6 @@
 <?php
 
-namespace webignition\Tests\Mock\HtmlValidator\Wrapper;
+namespace webignition\HtmlValidator\Mock\Wrapper;
 
 use webignition\HtmlValidator\Wrapper\Wrapper as BaseHtmlValidatorWrapper;
 

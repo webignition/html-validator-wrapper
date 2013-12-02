@@ -2,7 +2,7 @@
 
 namespace webignition\Tests\HtmlValidator\Wrapper;
 
-use webignition\Tests\Mock\HtmlValidator\Wrapper\Wrapper as MockHtmlValidatorWrapper;
+use webignition\HtmlValidator\Mock\Wrapper\Wrapper as MockHtmlValidatorWrapper;
 
 
 /**

@@ -4,7 +4,7 @@ namespace webignition\Tests\HtmlValidator\Wrapper;
 
 use webignition\HtmlValidator\Wrapper\Wrapper as HtmlValidatorWrapper;
 use webignition\HtmlValidator\Wrapper\Configuration\Configuration;
-use webignition\Tests\Mock\HtmlValidator\Wrapper\Wrapper as MockHtmlValidatorWrapper;
+use webignition\HtmlValidator\Mock\Wrapper\Wrapper as MockHtmlValidatorWrapper;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase {
     
