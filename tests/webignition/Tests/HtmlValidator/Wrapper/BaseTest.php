@@ -40,8 +40,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
      * @param string $testClass
      * @param string $testMethod
      */
-    protected function setTestFixturePath($testClass, $testMethod) {
-        $this->fixturePath = __DIR__ . self::FIXTURES_BASE_PATH . '/' . $testClass . '/' . $testMethod;       
+    protected function setTestFixturePath($testClass, $testMethod) {        
+        $this->fixturePath = __DIR__ . self::FIXTURES_BASE_PATH . '/' . str_replace('\\', '/', $testClass) . '/' . $testMethod;       
     }    
     
     

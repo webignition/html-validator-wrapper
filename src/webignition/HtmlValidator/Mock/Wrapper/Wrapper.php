@@ -8,9 +8,9 @@ class Wrapper extends BaseHtmlValidatorWrapper {
     
     /**
      *
-     * @var string
+     * @var array
      */
-    private $cssValidatorRawOutput = null;
+    private $validatorRawOutput = array();
     
     
     /**
@@ -19,17 +19,49 @@ class Wrapper extends BaseHtmlValidatorWrapper {
      * @return \webignition\Tests\Mock\HtmlValidator\Wrapper\Wrapper
      */
     public function setHtmlValidatorRawOutput($rawOutput) {
-        $this->cssValidatorRawOutput = $rawOutput;
+        $this->validatorRawOutput[] = $rawOutput;
         return $this;
     }
     
     
     /**
      * 
-     * @return array
+     * @param string $fixturePath
+     * @return \webignition\HtmlValidator\Mock\Wrapper\Wrapper
+     */
+    public function loadFixturesFromPath($fixturePath) {                
+        if (file_exists($fixturePath) && is_dir($fixturePath)) {
+            $fixtureFilePaths = array();
+            
+            $directoryIterator = new \DirectoryIterator($fixturePath);
+            foreach ($directoryIterator as $directoryItem) {
+                if ($directoryItem->isFile()) {
+                    $fixtureFilePaths[] = $directoryItem->getPathname();
+                }
+            }
+            
+            sort($fixtureFilePaths);            
+            foreach ($fixtureFilePaths as $fixtureFilePath) {
+                $this->validatorRawOutput[] = file_get_contents($fixtureFilePath);
+            }
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * 
+     * @return array|null
      */
     public function getRawValidatorOutputLines() {
-        return explode("\n", $this->cssValidatorRawOutput);
-    }    
+        if (is_null(key($this->validatorRawOutput))) {
+            return null;
+        }
+        
+        $content = explode("\n", current($this->validatorRawOutput));
+        next($this->validatorRawOutput);
+        
+        return $content;
+    }
     
 }
