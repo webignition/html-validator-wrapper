@@ -38,4 +38,16 @@ class CreateConfigurationTest extends \PHPUnit_Framework_TestCase {
         )));        
     }
     
+    public function testSetDocumentCharacterSet() {
+        $characterSet = 'foo';
+        
+        $wrapper = new Wrapper();
+        $wrapper->createConfiguration(array(
+            'documentUri' => 'http://example.com/',
+            'documentCharacterSet' => $characterSet
+        ));
+        
+        $this->assertEquals($characterSet, $wrapper->getConfiguration()->getDocumentCharacterSet());                
+    }
+    
 }

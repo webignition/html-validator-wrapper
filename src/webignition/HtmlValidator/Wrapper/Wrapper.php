@@ -45,7 +45,11 @@ class Wrapper {
         
         if (isset($configurationValues['validatorPath'])) {
             $configuration->setValidatorPath($configurationValues['validatorPath']);
-        }        
+        }
+        
+        if (isset($configurationValues['documentCharacterSet'])) {
+            $configuration->setDocumentCharacterSet($configurationValues['documentCharacterSet']);
+        }           
         
         $this->setConfiguration($configuration);
         return $this;
