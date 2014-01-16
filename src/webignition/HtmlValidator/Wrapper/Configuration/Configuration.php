@@ -21,6 +21,44 @@ class Configuration {
     private $documentUri = null;
     
     
+    /**
+     * Character set of document being validated.
+     * Only relevant if documentUri is of type file:/
+     * 
+     * @see http://en.wikipedia.org/wiki/Character_encodings_in_HTML     * 
+     * @var string
+     */
+    private $documentCharacterSet = null;
+    
+    
+    /**
+     * 
+     * @param string $characterSet
+     */
+    public function setDocumentCharacterSet($characterSet) {
+        $this->documentCharacterSet = $characterSet;
+        return $this;
+    }
+    
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getDocumentCharacterSet() {
+        return $this->documentCharacterSet;
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasDocumentCharacterSet() {
+        return is_string($this->documentCharacterSet);
+    }
+    
+    
     
     /**
      * 
@@ -73,7 +111,40 @@ class Configuration {
      * @return string
      */
     public function getExecutableCommand() {
-        return $this->getValidatorPath() . ' output=json uri=' . $this->getDocumentUri();        
+        return $this->getValidatorPath() . ' ' . $this->getCommandOptionsString() . ' uri=' . $this->getDocumentUri();        
+    }
+    
+    
+    /**
+     * 
+     * @return string
+     */
+    private function getCommandOptionsString() {
+        $optionPairs = array();
+        
+        foreach ($this->getCommandOptions() as $key => $value) {
+            $optionPairs[] = $key . '=' . $value;
+        }
+        
+        return implode(' ', $optionPairs);
+    }
+    
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    private function getCommandOptions() {
+        $options = array(
+            'output' => 'json'
+        );
+        
+        if ($this->hasDocumentCharacterSet()) {
+            $options['charset'] = $this->getDocumentCharacterSet();
+        }
+        
+        return $options;        
     }
     
     

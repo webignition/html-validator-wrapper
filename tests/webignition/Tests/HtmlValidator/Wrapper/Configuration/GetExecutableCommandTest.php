@@ -19,4 +19,12 @@ class GetExecutableCommandTest extends \PHPUnit_Framework_TestCase {
         
         $this->assertEquals('/usr/local/validator/cgi-bin/check output=json uri=file:/foo/example.html', $configuration->getExecutableCommand());
     }
+    
+    public function testExecutableCommandIncludesCharsetWhenSpecified() {
+        $configuration = new Configuration();
+        $configuration->setDocumentUri('file:/foo/example.html');
+        $configuration->setDocumentCharacterSet('utf8');
+        
+        $this->assertEquals('/usr/local/validator/cgi-bin/check output=json charset=utf8 uri=file:/foo/example.html', $configuration->getExecutableCommand());        
+    }
 }
