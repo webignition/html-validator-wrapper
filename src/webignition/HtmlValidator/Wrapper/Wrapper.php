@@ -3,7 +3,7 @@
 namespace webignition\HtmlValidator\Wrapper;
 
 use webignition\HtmlValidator\Wrapper\Configuration\Configuration;
-use webignition\HtmlValidator\Output\Parser;
+use webignition\HtmlValidator\Output\Parser\Parser;
 
 class Wrapper {
     
