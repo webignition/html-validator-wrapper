@@ -2,10 +2,10 @@ Content-Type: application/json; charset=UTF-8
 X-W3C-Validator-Recursion: 1
 X-W3C-Validator-Status: Invalid
 X-W3C-Validator-Errors: 3
-X-W3C-Validator-Warnings: 1
+X-W3C-Validator-Warnings: 0
 
 {
-    "url": "http://blog.simplytestable.com/",
+    "url": "http://example.com/",
     "messages": [
 
           {
