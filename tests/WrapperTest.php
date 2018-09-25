@@ -24,7 +24,7 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage('Configuration value "document-uri" not set');
         $this->expectExceptionCode(1);
 
-        $this->wrapper->createConfiguration([]);
+        $this->wrapper->configure();
     }
 
     public function testValidateWithoutDocumentUri()
@@ -44,7 +44,7 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetExecutableCommand($configurationValues, $expectedExecutableCommand)
     {
-        $this->wrapper->createConfiguration($configurationValues);
+        $this->wrapper->configure($configurationValues);
         $this->assertEquals($expectedExecutableCommand, $this->wrapper->getExecutableCommand());
     }
 
@@ -81,7 +81,7 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
     public function testValidate($configurationValues, $htmlValidatorRawOutput, $expectedErrorCount)
     {
         $wrapper = new Wrapper();
-        $wrapper->createConfiguration($configurationValues);
+        $wrapper->configure($configurationValues);
         $this->setHtmlValidatorRawOutput($htmlValidatorRawOutput);
         $output = $wrapper->validate();
 
