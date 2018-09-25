@@ -11,16 +11,19 @@ class Wrapper
     const CONFIG_KEY_VALIDATOR_PATH = 'validator-path';
     const CONFIG_KEY_DOCUMENT_URI = 'document-uri';
     const CONFIG_KEY_DOCUMENT_CHARACTER_SET = 'document-character-set';
+    const CONFIG_KEY_PARSER_CONFIGURATION_VALUES = 'parser-configuration-values';
 
     /**
      * @var string
      */
-    private $validatorPath = null;
+    private $validatorPath = self::DEFAULT_VALIDATOR_PATH;
 
     /**
      * @var string
      */
     private $documentUri = null;
+
+    private $parserConfigurationValues = [];
 
     /**
      * Character set of document being validated.
@@ -31,7 +34,22 @@ class Wrapper
      */
     private $documentCharacterSet = null;
 
-    public function createConfiguration(array $configurationValues = [])
+    /**
+     * @var Parser
+     */
+    private $outputParser;
+
+    public function __construct()
+    {
+        $this->outputParser = new Parser();
+    }
+
+    public function setOutputParser(Parser $parser)
+    {
+        $this->outputParser = $parser;
+    }
+
+    public function configure(array $configurationValues = [])
     {
         if (!isset($configurationValues[self::CONFIG_KEY_DOCUMENT_URI])) {
             throw new \InvalidArgumentException(
@@ -40,17 +58,19 @@ class Wrapper
             );
         }
 
-        if (!isset($configurationValues[self::CONFIG_KEY_VALIDATOR_PATH])) {
-            $configurationValues[self::CONFIG_KEY_VALIDATOR_PATH] = self::DEFAULT_VALIDATOR_PATH;
+        if (isset($configurationValues[self::CONFIG_KEY_VALIDATOR_PATH])) {
+            $this->validatorPath = $configurationValues[self::CONFIG_KEY_VALIDATOR_PATH];
         }
 
-        if (!isset($configurationValues[self::CONFIG_KEY_DOCUMENT_CHARACTER_SET])) {
-            $configurationValues[self::CONFIG_KEY_DOCUMENT_CHARACTER_SET] = null;
+        if (isset($configurationValues[self::CONFIG_KEY_DOCUMENT_CHARACTER_SET])) {
+            $this->documentCharacterSet = $configurationValues[self::CONFIG_KEY_DOCUMENT_CHARACTER_SET];
         }
 
-        $this->validatorPath = $configurationValues[self::CONFIG_KEY_VALIDATOR_PATH];
+        if (isset($configurationValues[self::CONFIG_KEY_PARSER_CONFIGURATION_VALUES])) {
+            $this->parserConfigurationValues = $configurationValues[self::CONFIG_KEY_PARSER_CONFIGURATION_VALUES];
+        }
+
         $this->documentUri = $configurationValues[self::CONFIG_KEY_DOCUMENT_URI];
-        $this->documentCharacterSet = $configurationValues[self::CONFIG_KEY_DOCUMENT_CHARACTER_SET];
     }
 
     public function validate(): Output
@@ -62,19 +82,19 @@ class Wrapper
             );
         }
 
-        $parser = new Parser();
+        $this->outputParser->configure($this->parserConfigurationValues);
 
-        return $parser->parse(
-            shell_exec($this->getExecutableCommand())
+        return $this->outputParser->parse(
+            shell_exec($this->createExecutableCommand())
         );
     }
 
-    public function getExecutableCommand(): string
+    private function createExecutableCommand(): string
     {
-        return $this->validatorPath . ' ' . $this->getCommandOptionsString() . ' uri=' . $this->documentUri;
+        return $this->validatorPath . ' ' . $this->createCommandOptionsString() . ' uri=' . $this->documentUri;
     }
 
-    private function getCommandOptionsString(): string
+    private function createCommandOptionsString(): string
     {
         $optionPairs = [];
 
