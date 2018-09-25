@@ -85,16 +85,16 @@ class Wrapper
         $this->outputParser->configure($this->parserConfigurationValues);
 
         return $this->outputParser->parse(
-            shell_exec($this->getExecutableCommand())
+            shell_exec($this->createExecutableCommand())
         );
     }
 
-    private function getExecutableCommand(): string
+    private function createExecutableCommand(): string
     {
-        return $this->validatorPath . ' ' . $this->getCommandOptionsString() . ' uri=' . $this->documentUri;
+        return $this->validatorPath . ' ' . $this->createCommandOptionsString() . ' uri=' . $this->documentUri;
     }
 
-    private function getCommandOptionsString(): string
+    private function createCommandOptionsString(): string
     {
         $optionPairs = [];
 

@@ -2,7 +2,10 @@
 
 namespace webignition\Tests\HtmlValidator\Wrapper;
 
+use Mockery\MockInterface;
 use phpmock\mockery\PHPMockery;
+use webignition\HtmlValidator\Output\Parser\Configuration as ParserConfiguration;
+use webignition\HtmlValidator\Output\Parser\Parser;
 use webignition\HtmlValidator\Wrapper\Wrapper;
 
 class WrapperTest extends \PHPUnit\Framework\TestCase
@@ -86,6 +89,67 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
                 'htmlValidatorRawOutput' => $this->loadHtmlValidatorRawOutputFixture('0-errors'),
                 'expectedExecutableCommand' => '/foo output=json charset=utf-16 uri=http://example.com/',
                 'expectedErrorCount' => 0,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider configureOutputParserDataProvider
+     *
+     * @param array $parserConfigurationValues
+     * @param string $htmlValidatorRawOutput
+     * @param array $expectedOutputParserConfigurationValues
+     */
+    public function testConfigureOutputParser(
+        array $parserConfigurationValues,
+        string $htmlValidatorRawOutput,
+        array $expectedOutputParserConfigurationValues
+    ) {
+        $expectedExecutableCommand = '/usr/local/validator/cgi-bin/check output=json uri=http://example.com/';
+
+        /* @var MockInterface|Parser $outputParser */
+        $outputParser = \Mockery::mock(Parser::class);
+        $outputParser
+            ->shouldReceive('configure')
+            ->withArgs(function ($outputParserConfigurationValues) use ($expectedOutputParserConfigurationValues) {
+                $this->assertEquals($expectedOutputParserConfigurationValues, $outputParserConfigurationValues);
+
+                return true;
+            });
+
+        $outputParser
+            ->shouldReceive('parse')
+            ->with($htmlValidatorRawOutput);
+
+        $wrapper = new Wrapper();
+        $wrapper->setOutputParser($outputParser);
+        $wrapper->configure([
+            Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/',
+            Wrapper::CONFIG_KEY_PARSER_CONFIGURATION_VALUES => $parserConfigurationValues,
+        ]);
+        $this->createWrapperShellExecCallExpectation($htmlValidatorRawOutput, $expectedExecutableCommand);
+
+        $wrapper->validate();
+    }
+
+    public function configureOutputParserDataProvider(): array
+    {
+        return [
+            'no configuration' => [
+                'parserConfigurationValues' => [],
+                'htmlValidatorRawOutput' => $this->loadHtmlValidatorRawOutputFixture('0-errors'),
+                'expectedOutputParserConfigurationValues' => [],
+            ],
+            'has configuration' => [
+                'parserConfigurationValues' => [
+                    ParserConfiguration::KEY_IGNORE_AMPERSAND_ENCODING_ISSUES => true,
+                    ParserConfiguration::KEY_CSS_VALIDATION_ISSUES => true,
+                ],
+                'htmlValidatorRawOutput' => $this->loadHtmlValidatorRawOutputFixture('0-errors'),
+                'expectedOutputParserConfigurationValues' => [
+                    ParserConfiguration::KEY_IGNORE_AMPERSAND_ENCODING_ISSUES => true,
+                    ParserConfiguration::KEY_CSS_VALIDATION_ISSUES => true,
+                ],
             ],
         ];
     }
