@@ -37,102 +37,69 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider getExecutableCommandDataProvider
-     *
-     * @param $configurationValues
-     * @param $expectedExecutableCommand
-     */
-    public function testGetExecutableCommand($configurationValues, $expectedExecutableCommand)
-    {
-        $this->wrapper->configure($configurationValues);
-        $this->assertEquals($expectedExecutableCommand, $this->wrapper->getExecutableCommand());
-    }
-
-    /**
-     * @return array
-     */
-    public function getExecutableCommandDataProvider()
-    {
-        return [
-            'default' => [
-                'configurationValues' => [
-                    Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com',
-                ],
-                'expectedExecutableCommand' => '/usr/local/validator/cgi-bin/check output=json uri=http://example.com',
-            ],
-            'non-default' => [
-                'configurationValues' => [
-                    Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com',
-                    Wrapper::CONFIG_KEY_VALIDATOR_PATH => '/foo',
-                    Wrapper::CONFIG_KEY_DOCUMENT_CHARACTER_SET => 'utf-8',
-                ],
-                'expectedExecutableCommand' => '/foo output=json charset=utf-8 uri=http://example.com',
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider validateDataProvider
      *
      * @param array $configurationValues
      * @param string $htmlValidatorRawOutput
+     * @param string $expectedExecutableCommand
      * @param int $expectedErrorCount
      */
-    public function testValidate($configurationValues, $htmlValidatorRawOutput, $expectedErrorCount)
-    {
+    public function testValidate(
+        array $configurationValues,
+        string $htmlValidatorRawOutput,
+        string $expectedExecutableCommand,
+        int $expectedErrorCount
+    ) {
         $wrapper = new Wrapper();
         $wrapper->configure($configurationValues);
-        $this->setHtmlValidatorRawOutput($htmlValidatorRawOutput);
+        $this->createWrapperShellExecCallExpectation($htmlValidatorRawOutput, $expectedExecutableCommand);
         $output = $wrapper->validate();
 
         $this->assertEquals($expectedErrorCount, $output->getErrorCount());
     }
 
-    /**
-     * @return array
-     */
-    public function validateDataProvider()
+    public function validateDataProvider(): array
     {
         return [
-            'no errors' => [
+            'no errors, default configuration' => [
                 'configurationValues' => [
                     Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/'
                 ],
                 'htmlValidatorRawOutput' => $this->loadHtmlValidatorRawOutputFixture('0-errors'),
+                'expectedExecutableCommand' => '/usr/local/validator/cgi-bin/check output=json uri=http://example.com/',
                 'expectedErrorCount' => 0,
             ],
-            'three errors' => [
+            'three errors, default configuration' => [
                 'configurationValues' => [
                     Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/'
                 ],
                 'htmlValidatorRawOutput' => $this->loadHtmlValidatorRawOutputFixture('3-errors'),
+                'expectedExecutableCommand' => '/usr/local/validator/cgi-bin/check output=json uri=http://example.com/',
                 'expectedErrorCount' => 3,
+            ],
+            'no errors, non-default configuration' => [
+                'configurationValues' => [
+                    Wrapper::CONFIG_KEY_VALIDATOR_PATH => '/foo',
+                    Wrapper::CONFIG_KEY_DOCUMENT_CHARACTER_SET => 'utf-16',
+                    Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/'
+                ],
+                'htmlValidatorRawOutput' => $this->loadHtmlValidatorRawOutputFixture('0-errors'),
+                'expectedExecutableCommand' => '/foo output=json charset=utf-16 uri=http://example.com/',
+                'expectedErrorCount' => 0,
             ],
         ];
     }
 
-
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    private function loadHtmlValidatorRawOutputFixture($name)
+    private function loadHtmlValidatorRawOutputFixture(string $name): string
     {
         return file_get_contents(__DIR__ . '/fixtures/raw-html-validator-output/' . $name . '.txt');
     }
 
-    /**
-     * @param string $rawOutput
-     */
-    private function setHtmlValidatorRawOutput($rawOutput)
+    private function createWrapperShellExecCallExpectation(string $rawOutput, string $expectedExecutableCommand)
     {
-        PHPMockery::mock(
-            'webignition\HtmlValidator\Wrapper',
-            'shell_exec'
-        )->andReturn(
-            $rawOutput
-        );
+        PHPMockery::mock('webignition\HtmlValidator\Wrapper', 'shell_exec')
+            ->with($expectedExecutableCommand)
+            ->andReturn($rawOutput);
     }
 
     /**

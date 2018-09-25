@@ -89,7 +89,7 @@ class Wrapper
         );
     }
 
-    public function getExecutableCommand(): string
+    private function getExecutableCommand(): string
     {
         return $this->validatorPath . ' ' . $this->getCommandOptionsString() . ' uri=' . $this->documentUri;
     }
