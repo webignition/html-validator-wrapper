@@ -5,7 +5,7 @@ namespace webignition\Tests\HtmlValidator\Wrapper;
 use phpmock\mockery\PHPMockery;
 use webignition\HtmlValidator\Wrapper\Wrapper;
 
-class WrapperTest extends \PHPUnit_Framework_TestCase
+class WrapperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Wrapper
@@ -20,22 +20,18 @@ class WrapperTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateConfigurationWithoutDocumentUri()
     {
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
-            'Configuration value "document-uri" not set',
-            1
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Configuration value "document-uri" not set');
+        $this->expectExceptionCode(1);
 
         $this->wrapper->createConfiguration([]);
     }
 
     public function testValidateWithoutDocumentUri()
     {
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
-            'Configuration value "document-uri" not set',
-            2
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Configuration value "document-uri" not set');
+        $this->expectExceptionCode(2);
 
         $this->wrapper->validate();
     }

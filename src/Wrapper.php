@@ -13,14 +13,11 @@ class Wrapper
     const CONFIG_KEY_DOCUMENT_CHARACTER_SET = 'document-character-set';
 
     /**
-     * Path to command-line validator
-     *
      * @var string
      */
     private $validatorPath = null;
 
     /**
-     *
      * @var string
      */
     private $documentUri = null;
@@ -34,10 +31,7 @@ class Wrapper
      */
     private $documentCharacterSet = null;
 
-    /**
-     * @param array $configurationValues
-     */
-    public function createConfiguration($configurationValues)
+    public function createConfiguration(array $configurationValues = [])
     {
         if (!isset($configurationValues[self::CONFIG_KEY_DOCUMENT_URI])) {
             throw new \InvalidArgumentException(
@@ -59,10 +53,7 @@ class Wrapper
         $this->documentCharacterSet = $configurationValues[self::CONFIG_KEY_DOCUMENT_CHARACTER_SET];
     }
 
-    /**
-     * @return Output
-     */
-    public function validate()
+    public function validate(): Output
     {
         if (empty($this->documentUri)) {
             throw new \InvalidArgumentException(
@@ -72,25 +63,20 @@ class Wrapper
         }
 
         $parser = new Parser();
+
         return $parser->parse(
             shell_exec($this->getExecutableCommand())
         );
     }
 
-    /**
-     * @return string
-     */
-    public function getExecutableCommand()
+    public function getExecutableCommand(): string
     {
         return $this->validatorPath . ' ' . $this->getCommandOptionsString() . ' uri=' . $this->documentUri;
     }
 
-    /**
-     * @return string
-     */
-    private function getCommandOptionsString()
+    private function getCommandOptionsString(): string
     {
-        $optionPairs = array();
+        $optionPairs = [];
 
         foreach ($this->getCommandOptions() as $key => $value) {
             $optionPairs[] = $key . '=' . $value;
@@ -103,11 +89,11 @@ class Wrapper
      *
      * @return array
      */
-    private function getCommandOptions()
+    private function getCommandOptions(): array
     {
-        $options = array(
+        $options = [
             'output' => 'json'
-        );
+        ];
 
         if (!empty($this->documentCharacterSet)) {
             $options['charset'] = $this->documentCharacterSet;
