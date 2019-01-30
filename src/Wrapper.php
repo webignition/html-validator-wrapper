@@ -3,7 +3,6 @@
 namespace webignition\HtmlValidator\Wrapper;
 
 use webignition\HtmlValidator\Output\Output;
-use webignition\HtmlValidator\Output\Parser\Parser;
 
 class Wrapper
 {
@@ -17,8 +16,6 @@ class Wrapper
      */
     private $documentUri = null;
 
-    private $parserConfigurationValues = [];
-
     /**
      * Character set of document being validated.
      * Only relevant if documentUri is of type file:/
@@ -28,23 +25,13 @@ class Wrapper
      */
     private $documentCharacterSet = null;
 
-    /**
-     * @var Parser
-     */
-    private $outputParser;
     private $commandFactory;
     private $commandExecutor;
 
     public function __construct(CommandFactory $commandFactory, CommandExecutor $commandExecutor)
     {
-        $this->outputParser = new Parser();
         $this->commandFactory = $commandFactory;
         $this->commandExecutor = $commandExecutor;
-    }
-
-    public function setOutputParser(Parser $parser)
-    {
-        $this->outputParser = $parser;
     }
 
     public function configure(array $configurationValues = [])
@@ -60,10 +47,6 @@ class Wrapper
             $this->documentCharacterSet = $configurationValues[self::CONFIG_KEY_DOCUMENT_CHARACTER_SET];
         }
 
-        if (isset($configurationValues[self::CONFIG_KEY_PARSER_CONFIGURATION_VALUES])) {
-            $this->parserConfigurationValues = $configurationValues[self::CONFIG_KEY_PARSER_CONFIGURATION_VALUES];
-        }
-
         $this->documentUri = $configurationValues[self::CONFIG_KEY_DOCUMENT_URI];
     }
 
@@ -76,10 +59,8 @@ class Wrapper
             );
         }
 
-        $this->outputParser->configure($this->parserConfigurationValues);
-
-        return $this->outputParser->parse(
-            shell_exec($this->commandFactory->create($this->documentUri, $this->documentCharacterSet))
+        return $this->commandExecutor->execute(
+            $this->commandFactory->create($this->documentUri, $this->documentCharacterSet)
         );
     }
 }
