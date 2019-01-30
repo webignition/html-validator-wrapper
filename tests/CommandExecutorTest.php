@@ -12,7 +12,7 @@ class CommandExecutorTest extends \PHPUnit\Framework\TestCase
 {
     public function testExecute()
     {
-        $validatorRawOutput = file_get_contents(__DIR__ . '/fixtures/raw-html-validator-output/0-errors.txt');
+        $validatorRawOutput = 'valid validator raw output';
         $output = \Mockery::mock(Output::class);
 
         /* @var MockInterface|OutputParser $outputParser */
