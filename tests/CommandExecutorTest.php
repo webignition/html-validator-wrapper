@@ -2,6 +2,7 @@
 
 namespace webignition\Tests\HtmlValidator\Wrapper;
 
+use Mockery\MockInterface;
 use phpmock\mockery\PHPMockery;
 use webignition\HtmlValidator\Output\Output;
 use webignition\HtmlValidator\Output\Parser\Parser as OutputParser;
@@ -11,17 +12,23 @@ class CommandExecutorTest extends \PHPUnit\Framework\TestCase
 {
     public function testExecute()
     {
+        $validatorRawOutput = file_get_contents(__DIR__ . '/fixtures/raw-html-validator-output/0-errors.txt');
+        $output = \Mockery::mock(Output::class);
+
+        /* @var MockInterface|OutputParser $outputParser */
+        $outputParser = \Mockery::mock(OutputParser::class);
+        $outputParser
+            ->shouldReceive('parse')
+            ->with($validatorRawOutput)
+            ->andReturn($output);
+
         $command = '/command';
-        $commandExecutor = new CommandExecutor(new OutputParser());
+        $this->createShellExecCallExpectation($validatorRawOutput, $command);
 
-        $this->createShellExecCallExpectation(
-            file_get_contents(__DIR__ . '/fixtures/raw-html-validator-output/0-errors.txt'),
-            $command
-        );
+        $commandExecutor = new CommandExecutor($outputParser);
+        $executorOutput = $commandExecutor->execute($command);
 
-        $output = $commandExecutor->execute($command);
-
-        $this->assertInstanceOf(Output::class, $output);
+        $this->assertSame($output, $executorOutput);
     }
 
     private function createShellExecCallExpectation(string $rawOutput, string $expectedExecutableCommand)
