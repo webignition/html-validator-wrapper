@@ -5,7 +5,8 @@ namespace webignition\Tests\HtmlValidator\Wrapper;
 use Mockery\MockInterface;
 use phpmock\mockery\PHPMockery;
 use webignition\HtmlValidator\Output\Parser\Configuration as ParserConfiguration;
-use webignition\HtmlValidator\Output\Parser\Parser;
+use webignition\HtmlValidator\Output\Parser\Parser as OutputParser;
+use webignition\HtmlValidator\Wrapper\CommandExecutor;
 use webignition\HtmlValidator\Wrapper\CommandFactory;
 use webignition\HtmlValidator\Wrapper\Wrapper;
 
@@ -15,7 +16,10 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateConfigurationWithoutDocumentUri()
     {
-        $wrapper = new Wrapper(new CommandFactory(self::VALIDATOR_PATH));
+        $wrapper = $this->createWrapper(
+            new CommandFactory(self::VALIDATOR_PATH),
+            new CommandExecutor(new OutputParser())
+        );
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Configuration value "document-uri" not set');
@@ -26,7 +30,10 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateWithoutDocumentUri()
     {
-        $wrapper = new Wrapper(new CommandFactory(self::VALIDATOR_PATH));
+        $wrapper = $this->createWrapper(
+            new CommandFactory(self::VALIDATOR_PATH),
+            new CommandExecutor(new OutputParser())
+        );
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Configuration value "document-uri" not set');
@@ -49,7 +56,11 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
         string $expectedExecutableCommand,
         int $expectedErrorCount
     ) {
-        $wrapper = new Wrapper(new CommandFactory(self::VALIDATOR_PATH));
+        $wrapper = $this->createWrapper(
+            new CommandFactory(self::VALIDATOR_PATH),
+            new CommandExecutor(new OutputParser())
+        );
+
         $wrapper->configure($configurationValues);
         $this->createWrapperShellExecCallExpectation($htmlValidatorRawOutput, $expectedExecutableCommand);
         $output = $wrapper->validate();
@@ -108,8 +119,8 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
         $expectedExecutableCommand =
             '/usr/local/validator/cgi-bin/check output=json charset=utf-8 uri=http://example.com/';
 
-        /* @var MockInterface|Parser $outputParser */
-        $outputParser = \Mockery::mock(Parser::class);
+        /* @var MockInterface|OutputParser $outputParser */
+        $outputParser = \Mockery::mock(OutputParser::class);
         $outputParser
             ->shouldReceive('configure')
             ->withArgs(function ($outputParserConfigurationValues) use ($expectedOutputParserConfigurationValues) {
@@ -122,7 +133,11 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
             ->shouldReceive('parse')
             ->with($htmlValidatorRawOutput);
 
-        $wrapper = new Wrapper(new CommandFactory(self::VALIDATOR_PATH));
+        $wrapper = $this->createWrapper(
+            new CommandFactory(self::VALIDATOR_PATH),
+            new CommandExecutor($outputParser)
+        );
+
         $wrapper->setOutputParser($outputParser);
         $wrapper->configure([
             Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/',
@@ -166,6 +181,11 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
         PHPMockery::mock('webignition\HtmlValidator\Wrapper', 'shell_exec')
             ->with($expectedExecutableCommand)
             ->andReturn($rawOutput);
+    }
+
+    private function createWrapper(CommandFactory $commandFactory, CommandExecutor $commandExecutor): Wrapper
+    {
+        return new Wrapper($commandFactory, $commandExecutor);
     }
 
     /**

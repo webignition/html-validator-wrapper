@@ -33,11 +33,13 @@ class Wrapper
      */
     private $outputParser;
     private $commandFactory;
+    private $commandExecutor;
 
-    public function __construct(CommandFactory $commandFactory)
+    public function __construct(CommandFactory $commandFactory, CommandExecutor $commandExecutor)
     {
         $this->outputParser = new Parser();
         $this->commandFactory = $commandFactory;
+        $this->commandExecutor = $commandExecutor;
     }
 
     public function setOutputParser(Parser $parser)
