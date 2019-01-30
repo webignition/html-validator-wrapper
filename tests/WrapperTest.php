@@ -6,37 +6,33 @@ use Mockery\MockInterface;
 use phpmock\mockery\PHPMockery;
 use webignition\HtmlValidator\Output\Parser\Configuration as ParserConfiguration;
 use webignition\HtmlValidator\Output\Parser\Parser;
+use webignition\HtmlValidator\Wrapper\CommandFactory;
 use webignition\HtmlValidator\Wrapper\Wrapper;
 
 class WrapperTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Wrapper
-     */
-    private $wrapper;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->wrapper = new Wrapper();
-    }
+    const VALIDATOR_PATH = '/usr/local/validator/cgi-bin/check';
 
     public function testCreateConfigurationWithoutDocumentUri()
     {
+        $wrapper = new Wrapper(new CommandFactory(self::VALIDATOR_PATH));
+
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Configuration value "document-uri" not set');
         $this->expectExceptionCode(1);
 
-        $this->wrapper->configure();
+        $wrapper->configure();
     }
 
     public function testValidateWithoutDocumentUri()
     {
+        $wrapper = new Wrapper(new CommandFactory(self::VALIDATOR_PATH));
+
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Configuration value "document-uri" not set');
         $this->expectExceptionCode(2);
 
-        $this->wrapper->validate();
+        $wrapper->validate();
     }
 
     /**
@@ -53,7 +49,7 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
         string $expectedExecutableCommand,
         int $expectedErrorCount
     ) {
-        $wrapper = new Wrapper();
+        $wrapper = new Wrapper(new CommandFactory(self::VALIDATOR_PATH));
         $wrapper->configure($configurationValues);
         $this->createWrapperShellExecCallExpectation($htmlValidatorRawOutput, $expectedExecutableCommand);
         $output = $wrapper->validate();
@@ -66,28 +62,32 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
         return [
             'no errors, default configuration' => [
                 'configurationValues' => [
-                    Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/'
+                    Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/',
+                    Wrapper::CONFIG_KEY_DOCUMENT_CHARACTER_SET => 'utf-8',
                 ],
                 'htmlValidatorRawOutput' => $this->loadHtmlValidatorRawOutputFixture('0-errors'),
-                'expectedExecutableCommand' => '/usr/local/validator/cgi-bin/check output=json uri=http://example.com/',
+                'expectedExecutableCommand' =>
+                    '/usr/local/validator/cgi-bin/check output=json charset=utf-8 uri=http://example.com/',
                 'expectedErrorCount' => 0,
             ],
             'three errors, default configuration' => [
                 'configurationValues' => [
-                    Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/'
+                    Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/',
+                    Wrapper::CONFIG_KEY_DOCUMENT_CHARACTER_SET => 'utf-8',
                 ],
                 'htmlValidatorRawOutput' => $this->loadHtmlValidatorRawOutputFixture('3-errors'),
-                'expectedExecutableCommand' => '/usr/local/validator/cgi-bin/check output=json uri=http://example.com/',
+                'expectedExecutableCommand' =>
+                    '/usr/local/validator/cgi-bin/check output=json charset=utf-8 uri=http://example.com/',
                 'expectedErrorCount' => 3,
             ],
             'no errors, non-default configuration' => [
                 'configurationValues' => [
-                    Wrapper::CONFIG_KEY_VALIDATOR_PATH => '/foo',
                     Wrapper::CONFIG_KEY_DOCUMENT_CHARACTER_SET => 'utf-16',
                     Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/'
                 ],
                 'htmlValidatorRawOutput' => $this->loadHtmlValidatorRawOutputFixture('0-errors'),
-                'expectedExecutableCommand' => '/foo output=json charset=utf-16 uri=http://example.com/',
+                'expectedExecutableCommand' =>
+                    '/usr/local/validator/cgi-bin/check output=json charset=utf-16 uri=http://example.com/',
                 'expectedErrorCount' => 0,
             ],
         ];
@@ -105,7 +105,8 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
         string $htmlValidatorRawOutput,
         array $expectedOutputParserConfigurationValues
     ) {
-        $expectedExecutableCommand = '/usr/local/validator/cgi-bin/check output=json uri=http://example.com/';
+        $expectedExecutableCommand =
+            '/usr/local/validator/cgi-bin/check output=json charset=utf-8 uri=http://example.com/';
 
         /* @var MockInterface|Parser $outputParser */
         $outputParser = \Mockery::mock(Parser::class);
@@ -121,10 +122,11 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
             ->shouldReceive('parse')
             ->with($htmlValidatorRawOutput);
 
-        $wrapper = new Wrapper();
+        $wrapper = new Wrapper(new CommandFactory(self::VALIDATOR_PATH));
         $wrapper->setOutputParser($outputParser);
         $wrapper->configure([
             Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/',
+            Wrapper::CONFIG_KEY_DOCUMENT_CHARACTER_SET => 'utf-8',
             Wrapper::CONFIG_KEY_PARSER_CONFIGURATION_VALUES => $parserConfigurationValues,
         ]);
         $this->createWrapperShellExecCallExpectation($htmlValidatorRawOutput, $expectedExecutableCommand);

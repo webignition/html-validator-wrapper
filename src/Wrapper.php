@@ -8,15 +8,9 @@ use webignition\HtmlValidator\Output\Parser\Parser;
 class Wrapper
 {
     const DEFAULT_VALIDATOR_PATH = '/usr/local/validator/cgi-bin/check';
-    const CONFIG_KEY_VALIDATOR_PATH = 'validator-path';
     const CONFIG_KEY_DOCUMENT_URI = 'document-uri';
     const CONFIG_KEY_DOCUMENT_CHARACTER_SET = 'document-character-set';
     const CONFIG_KEY_PARSER_CONFIGURATION_VALUES = 'parser-configuration-values';
-
-    /**
-     * @var string
-     */
-    private $validatorPath = self::DEFAULT_VALIDATOR_PATH;
 
     /**
      * @var string
@@ -38,10 +32,12 @@ class Wrapper
      * @var Parser
      */
     private $outputParser;
+    private $commandFactory;
 
-    public function __construct()
+    public function __construct(CommandFactory $commandFactory)
     {
         $this->outputParser = new Parser();
+        $this->commandFactory = $commandFactory;
     }
 
     public function setOutputParser(Parser $parser)
@@ -56,10 +52,6 @@ class Wrapper
                 sprintf('Configuration value "%s" not set', self::CONFIG_KEY_DOCUMENT_URI),
                 1
             );
-        }
-
-        if (isset($configurationValues[self::CONFIG_KEY_VALIDATOR_PATH])) {
-            $this->validatorPath = $configurationValues[self::CONFIG_KEY_VALIDATOR_PATH];
         }
 
         if (isset($configurationValues[self::CONFIG_KEY_DOCUMENT_CHARACTER_SET])) {
@@ -85,40 +77,7 @@ class Wrapper
         $this->outputParser->configure($this->parserConfigurationValues);
 
         return $this->outputParser->parse(
-            shell_exec($this->createExecutableCommand())
+            shell_exec($this->commandFactory->create($this->documentUri, $this->documentCharacterSet))
         );
-    }
-
-    private function createExecutableCommand(): string
-    {
-        return $this->validatorPath . ' ' . $this->createCommandOptionsString() . ' uri=' . $this->documentUri;
-    }
-
-    private function createCommandOptionsString(): string
-    {
-        $optionPairs = [];
-
-        foreach ($this->getCommandOptions() as $key => $value) {
-            $optionPairs[] = $key . '=' . $value;
-        }
-
-        return implode(' ', $optionPairs);
-    }
-
-    /**
-     *
-     * @return array
-     */
-    private function getCommandOptions(): array
-    {
-        $options = [
-            'output' => 'json'
-        ];
-
-        if (!empty($this->documentCharacterSet)) {
-            $options['charset'] = $this->documentCharacterSet;
-        }
-
-        return $options;
     }
 }
