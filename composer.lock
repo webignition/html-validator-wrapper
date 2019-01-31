@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0996d4fc9d95abf43213aa4aebc89435",
+    "content-hash": "cae412bd02a79d3113b64bb944248ef4",
     "packages": [
         {
             "name": "webignition/disallowed-character-terminated-string",
@@ -48,31 +48,76 @@
             "time": "2012-07-16T21:29:50+00:00"
         },
         {
-            "name": "webignition/html-validator-output-parser",
-            "version": "1.1",
+            "name": "webignition/html-validator-output-models",
+            "version": "0.6",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webignition/html-validator-output-parser.git",
-                "reference": "c27486307f8939840639516ab9bac75ab633c46a"
+                "url": "https://github.com/webignition/html-validator-output-models.git",
+                "reference": "f83a477995fa5ec5de9c3cb0d284c6f248405bbf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/html-validator-output-parser/zipball/c27486307f8939840639516ab9bac75ab633c46a",
-                "reference": "c27486307f8939840639516ab9bac75ab633c46a",
+                "url": "https://api.github.com/repos/webignition/html-validator-output-models/zipball/f83a477995fa5ec5de9c3cb0d284c6f248405bbf",
+                "reference": "f83a477995fa5ec5de9c3cb0d284c6f248405bbf",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2",
-                "webignition/internet-media-type": ">=0.4.4"
+                "webignition/validator-message": ">=0.3,<1"
             },
             "require-dev": {
+                "phpstan/phpstan": "^0.11.1",
                 "phpunit/phpunit": "~7.0",
                 "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "webignition\\HtmlValidator\\Output\\": "src/"
+                    "webignition\\HtmlValidatorOutput\\Models\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Models for the output from the W3C HTML validator",
+            "homepage": "https://github.com/webignition/html-validator-output-models",
+            "keywords": [
+                "html",
+                "models",
+                "output",
+                "validator"
+            ],
+            "time": "2019-01-30T15:06:04+00:00"
+        },
+        {
+            "name": "webignition/html-validator-output-parser",
+            "version": "2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/html-validator-output-parser.git",
+                "reference": "31c8700ba8ba67625dc357dea7bb09d513ed6766"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/html-validator-output-parser/zipball/31c8700ba8ba67625dc357dea7bb09d513ed6766",
+                "reference": "31c8700ba8ba67625dc357dea7bb09d513ed6766",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2",
+                "webignition/html-validator-output-models": ">=0.6,<1",
+                "webignition/internet-media-type": ">=2,<3"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.11.1",
+                "phpunit/phpunit": "~7.0",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "webignition\\HtmlValidatorOutput\\Parser\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -87,31 +132,31 @@
                 "parser",
                 "validator"
             ],
-            "time": "2018-09-25T13:41:23+00:00"
+            "time": "2019-01-30T18:05:11+00:00"
         },
         {
             "name": "webignition/internet-media-type",
-            "version": "1.2",
+            "version": "2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/internet-media-type.git",
-                "reference": "464a7699fc1dca47d7b58573e605d0a247de7c5c"
+                "reference": "d9fa880260a9689477f132f9b2310233ecc9b30f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/internet-media-type/zipball/464a7699fc1dca47d7b58573e605d0a247de7c5c",
-                "reference": "464a7699fc1dca47d7b58573e605d0a247de7c5c",
+                "url": "https://api.github.com/repos/webignition/internet-media-type/zipball/d9fa880260a9689477f132f9b2310233ecc9b30f",
+                "reference": "d9fa880260a9689477f132f9b2310233ecc9b30f",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6.0",
-                "webignition/internet-media-type-interface": ">=0.1,<1.0",
+                "php": ">=7.2.0",
+                "webignition/internet-media-type-interface": ">=0.4,<1.0",
                 "webignition/quoted-string": ">=0.2.1,<1.0",
                 "webignition/string-parser": ">=0.2.3,<1.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~5.0",
-                "squizlabs/php_codesniffer": "3.*"
+                "phpunit/phpunit": "^7",
+                "squizlabs/php_codesniffer": "^3"
             },
             "type": "library",
             "autoload": {
@@ -138,24 +183,24 @@
                 "media type",
                 "media-type"
             ],
-            "time": "2018-03-22T10:51:41+00:00"
+            "time": "2018-10-09T10:03:45+00:00"
         },
         {
             "name": "webignition/internet-media-type-interface",
-            "version": "0.1",
+            "version": "0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/internet-media-type-interface.git",
-                "reference": "db57dba3b4dacb78c24cb2a4a88768be47794726"
+                "reference": "dde668e8fa9e0c49b9925a4eeadfa0bc65b26747"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/internet-media-type-interface/zipball/db57dba3b4dacb78c24cb2a4a88768be47794726",
-                "reference": "db57dba3b4dacb78c24cb2a4a88768be47794726",
+                "url": "https://api.github.com/repos/webignition/internet-media-type-interface/zipball/dde668e8fa9e0c49b9925a4eeadfa0bc65b26747",
+                "reference": "dde668e8fa9e0c49b9925a4eeadfa0bc65b26747",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6.0"
+                "php": ">=7.2.0"
             },
             "type": "library",
             "autoload": {
@@ -182,7 +227,7 @@
                 "media type",
                 "media-type"
             ],
-            "time": "2018-03-21T10:55:33+00:00"
+            "time": "2018-10-09T09:16:21+00:00"
         },
         {
             "name": "webignition/quoted-string",
@@ -277,6 +322,48 @@
                 "string"
             ],
             "time": "2017-05-11T10:04:12+00:00"
+        },
+        {
+            "name": "webignition/validator-message",
+            "version": "0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/validator-message.git",
+                "reference": "16896f1f1b055256d23423b8f4f8c1ff3dda4822"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/validator-message/zipball/16896f1f1b055256d23423b8f4f8c1ff3dda4822",
+                "reference": "16896f1f1b055256d23423b8f4f8c1ff3dda4822",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.11.1",
+                "phpunit/phpunit": "^7",
+                "squizlabs/php_codesniffer": "^3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "webignition\\ValidatorMessage\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "Generic validation output message",
+            "homepage": "https://github.com/webignition/validator-message",
+            "time": "2019-01-29T13:19:14+00:00"
         }
     ],
     "packages-dev": [

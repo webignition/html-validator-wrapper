@@ -27,7 +27,7 @@
     },
     "require": {
         "php": ">=7.2",
-        "webignition/html-validator-output-parser":"^1.1"
+        "webignition/html-validator-output-parser":">=2,<3"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.0",
