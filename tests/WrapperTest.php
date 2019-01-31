@@ -8,6 +8,7 @@ use webignition\HtmlValidator\Wrapper\CommandExecutor;
 use webignition\HtmlValidator\Wrapper\CommandFactory;
 use webignition\HtmlValidator\Wrapper\Wrapper;
 use webignition\HtmlValidatorOutput\Models\Output;
+use webignition\HtmlValidatorOutput\Parser\Flags;
 use webignition\ValidatorMessage\MessageList;
 
 class WrapperTest extends \PHPUnit\Framework\TestCase
@@ -19,10 +20,11 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
         $uri = 'file:/tmp/document.html';
         $documentCharacterSet = 'utf-8';
         $expectedCommand = '/usr/local/validator/cgi-bin/check output=json charset=utf-8 uri=file:/tmp/document.html';
+        $expectedFlags = Flags::NONE;
 
         $output = new Output(new MessageList());
 
-        $commandExecutor = $this->createCommandExecutor($expectedCommand, $output);
+        $commandExecutor = $this->createCommandExecutor($expectedCommand, $expectedFlags, $output);
 
         $wrapper = $this->createWrapper(
             new CommandFactory(self::VALIDATOR_PATH),
@@ -42,12 +44,12 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
     /**
      * @return MockInterface|CommandExecutor
      */
-    private function createCommandExecutor(string $expectedCommand, Output $output)
+    private function createCommandExecutor(string $expectedCommand, int $expectedFlags, Output $output)
     {
         $commandExecutor = \Mockery::mock(CommandExecutor::class);
         $commandExecutor
             ->shouldReceive('execute')
-            ->with($expectedCommand)
+            ->with($expectedCommand, $expectedFlags)
             ->andReturn($output);
 
         return $commandExecutor;

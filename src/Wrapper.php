@@ -3,6 +3,7 @@
 namespace webignition\HtmlValidator\Wrapper;
 
 use webignition\HtmlValidatorOutput\Models\Output;
+use webignition\HtmlValidatorOutput\Parser\Flags;
 
 class Wrapper
 {
@@ -15,10 +16,11 @@ class Wrapper
         $this->commandExecutor = $commandExecutor;
     }
 
-    public function validate(string $uri, string $documentCharacterSet): Output
+    public function validate(string $uri, string $documentCharacterSet, ?int $flags = Flags::NONE): Output
     {
         return $this->commandExecutor->execute(
-            $this->commandFactory->create($uri, $documentCharacterSet)
+            $this->commandFactory->create($uri, $documentCharacterSet),
+            $flags
         );
     }
 }
