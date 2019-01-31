@@ -7,13 +7,14 @@ use phpmock\mockery\PHPMockery;
 use webignition\HtmlValidatorOutput\Parser\Parser as OutputParser;
 use webignition\HtmlValidator\Wrapper\CommandExecutor;
 use webignition\HtmlValidatorOutput\Models\Output;
+use webignition\ValidatorMessage\MessageList;
 
 class CommandExecutorTest extends \PHPUnit\Framework\TestCase
 {
     public function testExecute()
     {
         $validatorRawOutput = 'valid validator raw output';
-        $output = \Mockery::mock(Output::class);
+        $output = new Output(new MessageList());
 
         /* @var MockInterface|OutputParser $outputParser */
         $outputParser = \Mockery::mock(OutputParser::class);

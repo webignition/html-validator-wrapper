@@ -8,6 +8,7 @@ use webignition\HtmlValidator\Wrapper\CommandExecutor;
 use webignition\HtmlValidator\Wrapper\CommandFactory;
 use webignition\HtmlValidator\Wrapper\Wrapper;
 use webignition\HtmlValidatorOutput\Models\Output;
+use webignition\ValidatorMessage\MessageList;
 
 class WrapperTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,8 +20,7 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
         $documentCharacterSet = 'utf-8';
         $expectedCommand = '/usr/local/validator/cgi-bin/check output=json charset=utf-8 uri=file:/tmp/document.html';
 
-        /* @var MockInterface|Output $output */
-        $output = \Mockery::mock(Output::class);
+        $output = new Output(new MessageList());
 
         $commandExecutor = $this->createCommandExecutor($expectedCommand, $output);
 
