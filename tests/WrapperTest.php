@@ -5,7 +5,6 @@ namespace webignition\Tests\HtmlValidator\Wrapper;
 
 use Mockery\MockInterface;
 use webignition\HtmlValidator\Output\Output;
-use webignition\HtmlValidator\Output\Parser\Parser as OutputParser;
 use webignition\HtmlValidator\Wrapper\CommandExecutor;
 use webignition\HtmlValidator\Wrapper\CommandFactory;
 use webignition\HtmlValidator\Wrapper\Wrapper;
@@ -14,39 +13,12 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
 {
     const VALIDATOR_PATH = '/usr/local/validator/cgi-bin/check';
 
-    public function testCreateConfigurationWithoutDocumentUri()
+    public function testValidate()
     {
-        $wrapper = $this->createWrapper(
-            new CommandFactory(self::VALIDATOR_PATH),
-            new CommandExecutor(new OutputParser())
-        );
+        $uri = 'file:/tmp/document.html';
+        $documentCharacterSet = 'utf-8';
+        $expectedCommand = '/usr/local/validator/cgi-bin/check output=json charset=utf-8 uri=file:/tmp/document.html';
 
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Configuration value "document-uri" not set');
-        $this->expectExceptionCode(1);
-
-        $wrapper->configure();
-    }
-
-    public function testValidateWithoutDocumentUri()
-    {
-        $wrapper = $this->createWrapper(
-            new CommandFactory(self::VALIDATOR_PATH),
-            new CommandExecutor(new OutputParser())
-        );
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Configuration value "document-uri" not set');
-        $this->expectExceptionCode(2);
-
-        $wrapper->validate();
-    }
-
-    /**
-     * @dataProvider validateDataProvider
-     */
-    public function testValidate(array $configurationValues, string $expectedCommand)
-    {
         /* @var MockInterface|Output $output */
         $output = \Mockery::mock(Output::class);
 
@@ -57,40 +29,9 @@ class WrapperTest extends \PHPUnit\Framework\TestCase
             $commandExecutor
         );
 
-        $wrapper->configure($configurationValues);
-        $validationOutput = $wrapper->validate();
+        $validationOutput = $wrapper->validate($uri, $documentCharacterSet);
 
         $this->assertSame($output, $validationOutput);
-    }
-
-    public function validateDataProvider(): array
-    {
-        return [
-            'no errors, default configuration' => [
-                'configurationValues' => [
-                    Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/',
-                    Wrapper::CONFIG_KEY_DOCUMENT_CHARACTER_SET => 'utf-8',
-                ],
-                'expectedCommand' =>
-                    '/usr/local/validator/cgi-bin/check output=json charset=utf-8 uri=http://example.com/',
-            ],
-            'three errors, default configuration' => [
-                'configurationValues' => [
-                    Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/',
-                    Wrapper::CONFIG_KEY_DOCUMENT_CHARACTER_SET => 'utf-8',
-                ],
-                'expectedCommand' =>
-                    '/usr/local/validator/cgi-bin/check output=json charset=utf-8 uri=http://example.com/',
-            ],
-            'no errors, non-default configuration' => [
-                'configurationValues' => [
-                    Wrapper::CONFIG_KEY_DOCUMENT_CHARACTER_SET => 'utf-16',
-                    Wrapper::CONFIG_KEY_DOCUMENT_URI => 'http://example.com/'
-                ],
-                'expectedCommand' =>
-                    '/usr/local/validator/cgi-bin/check output=json charset=utf-16 uri=http://example.com/',
-            ],
-        ];
     }
 
     private function createWrapper(CommandFactory $commandFactory, CommandExecutor $commandExecutor): Wrapper
