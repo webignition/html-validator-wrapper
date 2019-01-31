@@ -4,10 +4,10 @@
 namespace webignition\Tests\HtmlValidator\Wrapper;
 
 use Mockery\MockInterface;
-use webignition\HtmlValidator\Output\Output;
 use webignition\HtmlValidator\Wrapper\CommandExecutor;
 use webignition\HtmlValidator\Wrapper\CommandFactory;
 use webignition\HtmlValidator\Wrapper\Wrapper;
+use webignition\HtmlValidatorOutput\Models\Output;
 
 class WrapperTest extends \PHPUnit\Framework\TestCase
 {

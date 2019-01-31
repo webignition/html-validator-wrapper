@@ -4,9 +4,9 @@ namespace webignition\Tests\HtmlValidator\Wrapper;
 
 use Mockery\MockInterface;
 use phpmock\mockery\PHPMockery;
-use webignition\HtmlValidator\Output\Output;
-use webignition\HtmlValidator\Output\Parser\Parser as OutputParser;
+use webignition\HtmlValidatorOutput\Parser\Parser as OutputParser;
 use webignition\HtmlValidator\Wrapper\CommandExecutor;
+use webignition\HtmlValidatorOutput\Models\Output;
 
 class CommandExecutorTest extends \PHPUnit\Framework\TestCase
 {
