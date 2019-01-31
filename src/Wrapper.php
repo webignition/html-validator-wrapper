@@ -2,7 +2,7 @@
 
 namespace webignition\HtmlValidator\Wrapper;
 
-use webignition\HtmlValidator\Output\Output;
+use webignition\HtmlValidatorOutput\Models\Output;
 
 class Wrapper
 {

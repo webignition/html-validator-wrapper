@@ -2,8 +2,8 @@
 
 namespace webignition\HtmlValidator\Wrapper;
 
-use webignition\HtmlValidator\Output\Output;
-use webignition\HtmlValidator\Output\Parser\Parser as OutputParser;
+use webignition\HtmlValidatorOutput\Parser\Parser as OutputParser;
+use webignition\HtmlValidatorOutput\Models\Output;
 
 class CommandExecutor
 {

@@ -2,25 +2,20 @@
 
 namespace webignition\Tests\HtmlValidator\Wrapper;
 
-use Mockery\MockInterface;
 use phpmock\mockery\PHPMockery;
-use webignition\HtmlValidator\Output\Output;
-use webignition\HtmlValidator\Output\Parser\Parser as OutputParser;
+use webignition\HtmlValidatorOutput\Parser\Parser as OutputParser;
 use webignition\HtmlValidator\Wrapper\CommandExecutor;
+use webignition\HtmlValidatorOutput\Models\Output;
+use webignition\ValidatorMessage\MessageList;
 
 class CommandExecutorTest extends \PHPUnit\Framework\TestCase
 {
     public function testExecute()
     {
-        $validatorRawOutput = 'valid validator raw output';
-        $output = \Mockery::mock(Output::class);
+        $validatorRawOutput = (string) file_get_contents(__DIR__ . '/Fixtures/html-validator-output-no-errors.txt');
 
-        /* @var MockInterface|OutputParser $outputParser */
-        $outputParser = \Mockery::mock(OutputParser::class);
-        $outputParser
-            ->shouldReceive('parse')
-            ->with($validatorRawOutput)
-            ->andReturn($output);
+        $expectedOutput = new Output(new MessageList());
+        $outputParser = new OutputParser();
 
         $command = '/command';
         $this->createShellExecCallExpectation($validatorRawOutput, $command);
@@ -28,7 +23,8 @@ class CommandExecutorTest extends \PHPUnit\Framework\TestCase
         $commandExecutor = new CommandExecutor($outputParser);
         $executorOutput = $commandExecutor->execute($command);
 
-        $this->assertSame($output, $executorOutput);
+        $this->assertEquals($expectedOutput->getErrorCount(), $executorOutput->getErrorCount());
+        $this->assertEquals($expectedOutput->getMessages(), $executorOutput->getMessages());
     }
 
     private function createShellExecCallExpectation(string $rawOutput, string $expectedExecutableCommand)
