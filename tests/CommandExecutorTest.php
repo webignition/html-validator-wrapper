@@ -12,11 +12,9 @@ class CommandExecutorTest extends \PHPUnit\Framework\TestCase
 {
     public function testExecute()
     {
-        $validatorRawOutput = file_get_contents(__DIR__ . '/Fixtures/html-validator-output-no-errors.txt');
+        $validatorRawOutput = (string) file_get_contents(__DIR__ . '/Fixtures/html-validator-output-no-errors.txt');
 
         $expectedOutput = new Output(new MessageList());
-
-
         $outputParser = new OutputParser();
 
         $command = '/command';
